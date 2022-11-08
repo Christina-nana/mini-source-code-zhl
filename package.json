@@ -1,0 +1,24 @@
+{
+  "name": "source",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:utils": "pnpm run --filter @zhanghl/utils build",
+    "build:reactivity": "pnpm run --filter @zhanghl/reactivity build",
+    "build": "pnpm run --filter=\"@zhanghl/*\" build",
+    "test": "vitest packages/",
+    "test:once": "vitest run packages/",
+    "coverage": "vitest run --coverage"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.8.4",
+    "unbuild": "^0.9.4",
+    "vitest": "^0.25.0"
+  },
+  "dependencies": {
+    "@vitest/coverage-istanbul": "^0.25.0"
+  }
+}
