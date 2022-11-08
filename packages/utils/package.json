@@ -2,13 +2,13 @@
   "name": "@zhanghl/utils",
   "version": "1.0.0",
   "description": "",
+  "author": "",
+  "license": "ISC",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "unbuild",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+  }
 }

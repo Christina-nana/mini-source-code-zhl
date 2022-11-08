@@ -2,6 +2,8 @@
   "name": "@zhanghl/reactivity",
   "version": "1.0.0",
   "description": "",
+  "author": "",
+  "license": "ISC",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -11,7 +13,5 @@
   },
   "dependencies": {
     "@zhanghl/utils": "workspace:*"
-  },
-  "author": "",
-  "license": "ISC"
+  }
 }

@@ -2,6 +2,8 @@
   "name": "source",
   "version": "1.0.0",
   "description": "",
+  "author": "",
+  "license": "ISC",
   "main": "index.js",
   "scripts": {
     "build:utils": "pnpm run --filter @zhanghl/utils build",
@@ -9,16 +11,18 @@
     "build": "pnpm run --filter=\"@zhanghl/*\" build",
     "test": "vitest packages/",
     "test:once": "vitest run packages/",
-    "coverage": "vitest run --coverage"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "typescript": "^4.8.4",
-    "unbuild": "^0.9.4",
-    "vitest": "^0.25.0"
+    "coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@vitest/coverage-istanbul": "^0.25.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.29.4",
+    "eslint": "^8.27.0",
+    "typescript": "^4.8.4",
+    "unbuild": "^0.9.4",
+    "vitest": "^0.25.0"
   }
 }
