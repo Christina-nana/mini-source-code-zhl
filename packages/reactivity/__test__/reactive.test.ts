@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { effect, reactive, ref } from '../src'
 describe('响应式', () => {
   it('reactive基本功能', () => {
@@ -23,6 +23,39 @@ describe('响应式', () => {
 
     obj.info.userName = 'zhl-coder'
     expect(val).toBe('zhl-coder')
+  })
+
+  it('delete属性的响应式', () => {
+    let obj = reactive({ name: 'zhl', count: 1 })
+    let val
+    effect(() => {
+      val = obj.name
+    })
+    expect(val).toBe('zhl')
+    delete obj.name
+    expect(val).toBeUndefined()
+  })
+
+  it('为什么使用reflect', () => {
+    let obj = {
+      _name: 'zhl',
+      set name(newValue) {
+        this._name = newValue
+      },
+      get name() {
+        return this._name
+      }
+    }
+    let reObj = reactive(obj)
+    let fn1 = vi.fn(() => { })
+    effect(() => {
+      fn1(reObj.name)
+    })
+    expect(fn1).toBeCalledTimes(1)
+
+    reObj._name = 'coder'
+    expect(fn1).toBeCalledTimes(2)
+
   })
 
   it('ref传入简单数据类型', () => {
