@@ -9,7 +9,8 @@
  */
 const targetMap = new WeakMap() // WeakMap性能更好，回收机制，弱引用
 
-let activeEffect
+let activeEffect = null
+let stackEffect: any[] = []
 export function track(obj, key) {
   if (!activeEffect) return
   let depsMap = targetMap.get(obj)
@@ -34,6 +35,10 @@ export function trigger(obj, key) {
 
 export function effect(fn) {
   activeEffect = fn
+  stackEffect.push(activeEffect)
   fn() // 会触发proxy的get方法，执行track函数，执行完重置activeEffect
-  activeEffect = null
+  // fn内部还有effect，activeEffect指向就错了
+  stackEffect.pop()
+  // 恢复上一个嵌套数值
+  activeEffect = stackEffect[stackEffect.length - 1]
 }

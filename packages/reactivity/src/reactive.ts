@@ -1,11 +1,12 @@
 import { track, trigger } from './effect'
+import { isObject } from '@zhanghl/utils'
 
 export function reactive(obj: any) {
   return new Proxy(obj, {
     get(target, key) {
-      // 收集依赖关系
       track(target, key)
-      return Reflect.get(target, key)
+      // 收集依赖关系
+      return isObject(target[key]) ? reactive(target[key]) : Reflect.get(target, key)
     },
     set(target, key, value, receiver) {
       // 修改数据，执行副作用函数
