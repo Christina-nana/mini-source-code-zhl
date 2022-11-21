@@ -1,6 +1,6 @@
+import { isObject } from '@zhanghl/utils'
 import { track, trigger } from './effect'
 import { reactive } from './reactive'
-import { isObject } from '@zhanghl/utils'
 // ref的value值，只会访问value这个属性，不需要proxy
 // 利用class的getter和setter
 export function ref(value) {

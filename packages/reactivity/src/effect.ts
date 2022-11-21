@@ -7,24 +7,30 @@
  *  }
  * }
  */
+import { COL_KEY } from './reactive'
 const targetMap = new WeakMap() // WeakMap性能更好，回收机制，弱引用
 
 let activeEffect = null
-let stackEffect: any[] = []
+const stackEffect: any[] = []
 export function track(obj, key) {
-  if (!activeEffect) return
+  if (!activeEffect)
+    return
   let depsMap = targetMap.get(obj)
-  if (!depsMap) targetMap.set(obj, (depsMap = new Map()))
+  if (!depsMap)
+    targetMap.set(obj, (depsMap = new Map()))
 
   let deps = depsMap.get(key)
-  if (!deps) depsMap.set(key, (deps = new Set()))
+  if (!deps)
+    depsMap.set(key, (deps = new Set()))
 
   deps.add(activeEffect)
 }
 
 export function trigger(obj, key) {
   const depsMap = targetMap.get(obj)
-  if (!depsMap) return
+  if (!depsMap)
+    return
+
   const deps = depsMap.get(key)
   if (deps) {
     deps.forEach((effect) => {

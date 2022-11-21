@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from 'vitest'
 import { effect, reactive } from '../src'
 
 describe('副作用', () => {
@@ -6,8 +6,8 @@ describe('副作用', () => {
     const data = { foo: 1, bar: 2 }
     const obj = reactive(data)
     let tmp1, tmp2
-    let fn1 = vi.fn(() => { }) // vi.fn包裹之后，就可以测试这个函数执行了多少次
-    let fn2 = vi.fn(() => { })
+    const fn1 = vi.fn(() => { }) // vi.fn包裹之后，就可以测试这个函数执行了多少次
+    const fn2 = vi.fn(() => { })
     effect(() => {
       fn1()
       effect(() => {
