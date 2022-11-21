@@ -80,17 +80,32 @@ describe('响应式', () => {
     obj.value.count++
     expect(val).toBe(2)
   })
+})
 
-  // 每一个边缘case都需要一个测试
-  it('set数据类型', () => {
+// 每一个边缘case都需要一个测试
+// {}、[] => proxy
+// number、string => ref
+// Set、Map、WeakMap、WeakSet => proxy
+describe('支持set/map', () => {
+  it('set', () => {
     const set = reactive(new Set([1]))
     let val
     effect(() => {
       val = set.size
     })
     expect(val).toBe(1)
-
     set.add(2)
     expect(val).toBe(2)
+  })
+  it('set的删除', () => {
+    const set = reactive(new Set([1, 2]))
+    let val
+    effect(() => {
+      val = set.size
+    })
+    expect(val).toBe(2)
+
+    set.delete(2)
+    // expect(val).toBe(1)
   })
 })

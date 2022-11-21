@@ -50,9 +50,8 @@ const COL_KEY = Symbol('collection')
 const collectionHandlers = {
   // set.add、set.delete、set.has...都是触发get函数
   get(target, key) {
-    if (key === '__reative_raw')
+    if (key === '__reactive_raw')
       return target
-
     if (key === 'size') {
       track(target, COL_KEY)
       return Reflect.get(target, key)
@@ -63,13 +62,16 @@ const collectionHandlers = {
 
 const collectionActions = {
   add(key) {
-    const target = this.__reative_raw
+    const target = this.__reactive_raw
     const res = target.add(key)
     trigger(target, COL_KEY)
     return res
   },
-  delete() {
-
+  delete(key) {
+    const target = this.__reactive_raw
+    const res = target.delete(key)
+    trigger(target, COL_KEY)
+    return res
   },
   has() {
 
