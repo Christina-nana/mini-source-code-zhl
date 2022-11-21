@@ -48,7 +48,7 @@ const baseHandlers = {
 
 const COL_KEY = Symbol('collection')
 const collectionHandlers = {
-  // set.add、set.delete、set.has...都是触发get函数
+  // 所有的set和map对象触发的方法get函数
   get(target, key) {
     if (key === '__reactive_raw')
       return target
@@ -73,8 +73,11 @@ const collectionActions = {
     trigger(target, COL_KEY)
     return res
   },
-  has() {
-
+  has(key) {
+    const target = this.__reactive_raw
+    const res = target.has(key)
+    trigger(target, COL_KEY)
+    return res
   },
 }
 
