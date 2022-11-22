@@ -7,11 +7,17 @@ export function ref(value) {
   return new RefImpl(value)
 }
 
+export function isRef(obj) {
+  return obj._isRef
+}
+
 class RefImpl {
   // ref 本身也可以是复杂数据类型
   _val: any
+  _isRef: boolean
 
   constructor(value) {
+    this._isRef = true
     this._val = isObject(value) ? reactive(value) : value
   }
 

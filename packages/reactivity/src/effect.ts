@@ -7,7 +7,6 @@
  *  }
  * }
  */
-import { COL_KEY } from './reactive'
 const targetMap = new WeakMap() // WeakMap性能更好，回收机制，弱引用
 
 let activeEffect = null

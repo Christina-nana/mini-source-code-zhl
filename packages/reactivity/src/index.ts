@@ -1,8 +1,8 @@
 import { isObject } from '@zhanghl/utils'
 
 export { effect } from './effect'
-export { reactive } from './reactive'
-export { ref } from './ref'
+export { reactive, shadowReactive, isReactive } from './reactive'
+export { ref, isRef } from './ref'
 
 const res = isObject({})
 export default res

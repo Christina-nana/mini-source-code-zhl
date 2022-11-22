@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { effect, reactive, ref } from '../src'
+import { effect, isReactive, isRef, reactive, ref, shadowReactive } from '../src'
 describe('响应式', () => {
   it('reactive传入普通对象', () => {
     const obj = reactive({ count: 1 })
@@ -79,6 +79,31 @@ describe('响应式', () => {
 
     obj.value.count++
     expect(val).toBe(2)
+  })
+
+  it('shadowReactive浅层响应式', () => {
+    const obj = shadowReactive({ count: 1, info: { name: 'code' } })
+    let val1, val2
+    effect(() => {
+      val1 = obj.count
+      val2 = obj.info.name
+    })
+
+    expect(val1).toBe(1)
+    expect(val2).toBe('code')
+
+    obj.count = 2
+    obj.info.name = 'zhl'
+
+    expect(val1).toBe(2)
+    expect(val2).toBe('code')
+  })
+
+  it('isRef/isReactive工具函数', () => {
+    const num = ref(1)
+    const obj = reactive({ count: 1, info: { name: 'zhl' } })
+    expect(isRef(num)).toBe(true)
+    expect(isReactive(obj)).toBe(true)
   })
 })
 

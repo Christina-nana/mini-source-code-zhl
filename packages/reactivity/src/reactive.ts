@@ -1,16 +1,17 @@
-import { isObject } from '@zhanghl/utils'
-import { track, trigger } from './effect'
+import { toRawType } from '@zhanghl/utils'
+import { baseHandlers, shadowReactiveBaseHandlers } from './baseHandlers'
+import { collectionHandlers } from './collectionHandlers'
 
-function getRawType(val: any) {
-  return Object.prototype.toString.call(val).slice(8, -1)
-}
-
-const enum TargetType {
+export const COL_KEY = Symbol('collection')
+export const enum TargetType {
   INVALID = 0,
   COMMON = 1, // 普通对象
   COLLECTION = 2, // Set、Map、WeakSet、WeakMap
 }
-
+export const ReactiveFlags = {
+  RAW: '__v_raw',
+  IS_REACTIVE: '__is_reactive',
+}
 const targetTypeMap = (type) => {
   switch (type) {
     case 'Object':
@@ -26,62 +27,16 @@ const targetTypeMap = (type) => {
   }
 }
 
-const baseHandlers = {
-  get(target, key, receiver) {
-    track(target, key)
-    // 收集依赖关系
-    return isObject(target[key]) ? reactive(target[key]) : Reflect.get(target, key, receiver)
-  },
-  set(target, key, value, receiver) {
-    // 修改数据，执行副作用函数
-    const res = Reflect.set(target, key, value, receiver)
-    // target[key] = value
-    trigger(target, key)
-    return res
-  },
-  deleteProperty(target, key) {
-    const res = Reflect.deleteProperty(target, key)
-    trigger(target, key)
-    return res
-  },
-}
-
-const COL_KEY = Symbol('collection')
-const collectionHandlers = {
-  // 所有的set和map对象触发的方法get函数
-  get(target, key) {
-    if (key === '__reactive_raw')
-      return target
-    if (key === 'size') {
-      track(target, COL_KEY)
-      return Reflect.get(target, key)
-    }
-    return collectionActions[key]
-  },
-}
-
-const collectionActions = {
-  add(key) {
-    const target = this.__reactive_raw
-    const res = target.add(key)
-    trigger(target, COL_KEY)
-    return res
-  },
-  delete(key) {
-    const target = this.__reactive_raw
-    const res = target.delete(key)
-    trigger(target, COL_KEY)
-    return res
-  },
-  has(key) {
-    const target = this.__reactive_raw
-    const res = target.has(key)
-    trigger(target, COL_KEY)
-    return res
-  },
+export function isReactive(obj) {
+  return obj[ReactiveFlags.IS_REACTIVE]
 }
 
 export function reactive(obj: any) {
-  const handlers = targetTypeMap(getRawType(obj)) === TargetType.COMMON ? baseHandlers : collectionHandlers
+  const handlers = targetTypeMap(toRawType(obj)) === TargetType.COMMON ? baseHandlers : collectionHandlers
+  return new Proxy(obj, handlers)
+}
+
+export function shadowReactive(obj: any) {
+  const handlers = targetTypeMap(toRawType(obj)) === TargetType.COMMON ? shadowReactiveBaseHandlers : collectionHandlers
   return new Proxy(obj, handlers)
 }
