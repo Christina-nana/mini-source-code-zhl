@@ -105,6 +105,26 @@ describe('响应式', () => {
     expect(isRef(num)).toBe(true)
     expect(isReactive(obj)).toBe(true)
   })
+
+  it('响应式的清理', () => {
+    const obj = reactive({ ok: true, name: 'zhl' })
+    let val
+    const fn = vi.fn(() => {
+      val = obj.ok ? obj.name : 'vue3'
+    })
+
+    effect(fn)
+
+    expect(val).toBe('zhl')
+    expect(fn).toBeCalledTimes(1)
+
+    obj.ok = false
+    // expect(val).toBe('vue3')
+    // expect(fn).toBeCalledTimes(2)
+
+    // obj.name = 'code'
+    // expect(fn).toBeCalledTimes(2)
+  })
 })
 
 // 每一个边缘case都需要一个测试
@@ -140,3 +160,4 @@ describe('支持set/map', () => {
     expect(set.has(1)).toBe(false)
   })
 })
+

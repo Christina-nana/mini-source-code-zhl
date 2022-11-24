@@ -9,7 +9,7 @@
  */
 const targetMap = new WeakMap() // WeakMap性能更好，回收机制，弱引用
 
-let activeEffect = null
+let activeEffect
 const stackEffect: any[] = []
 export function track(obj, key) {
   if (!activeEffect)
@@ -23,6 +23,7 @@ export function track(obj, key) {
     depsMap.set(key, (deps = new Set()))
 
   deps.add(activeEffect)
+  activeEffect.deps.push(deps)
 }
 
 export function trigger(obj, key) {
@@ -32,18 +33,37 @@ export function trigger(obj, key) {
 
   const deps = depsMap.get(key)
   if (deps) {
-    deps.forEach((effect) => {
+    const depsToRun = new Set(deps)
+    depsToRun.forEach((effect) => {
       effect()
     })
   }
 }
 
-export function effect(fn) {
-  activeEffect = fn
-  stackEffect.push(activeEffect)
-  fn() // 会触发proxy的get方法，执行track函数，执行完重置activeEffect
-  // fn内部还有effect，activeEffect指向就错了
-  stackEffect.pop()
-  // 恢复上一个嵌套数值
-  activeEffect = stackEffect[stackEffect.length - 1]
+function clearup(effectFn) {
+  effectFn.deps.forEach((item) => {
+    item.delete(effectFn)
+  })
+  effectFn.deps = []
 }
+
+export function effect(fn) {
+  const effectFn = () => {
+    try {
+      activeEffect = effectFn
+      stackEffect.push(activeEffect)
+      clearup(effectFn)
+      fn() // 会触发proxy的get方法，执行track函数，执行完重置activeEffect
+    }
+    finally {
+      // fn内部还有effect，activeEffect指向就错了
+      stackEffect.pop()
+      // 恢复上一个嵌套数值
+      activeEffect = stackEffect[stackEffect.length - 1]
+    }
+  }
+  effectFn.deps = []
+  effectFn()
+  return effectFn
+}
+
